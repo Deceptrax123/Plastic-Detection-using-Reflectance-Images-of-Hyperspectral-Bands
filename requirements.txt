@@ -7,4 +7,3 @@ scikit-learn
 scikit-image
 wandb
 rasterio
-gdal
