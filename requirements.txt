@@ -1,0 +1,10 @@
+torch
+torchvision
+pandas
+numpy
+matplotlib
+scikit-learn
+scikit-image
+wandb
+rasterio
+gdal
