@@ -1,17 +1,22 @@
 # compute radiance and reflectance images and find their maximum and minimum reflectances.
 from osgeo import gdal
 import matplotlib.pyplot as plt
+from dotenv import load_dotenv
 import rasterio
 import cv2
+import os
 import numpy as np
 
 
 # Input Type:str
 def get_spectral_bands(file_paths):
     try:
+        load_dotenv('.env')
+        global_path = os.getenv("global")
+
         image_bands = list()  # 5X3
         for tif_file in file_paths:
-            dataset = gdal.Open(tif_file)
+            dataset = gdal.Open(os.path.join(global_path, tif_file))
 
             if dataset is None:
                 print("Failed")
@@ -25,7 +30,7 @@ def get_spectral_bands(file_paths):
                 band_data = band.ReadAsArray()
                 spectral_bands.append(band_data)  # dim=3
 
-            image_bands.append(spectral_bands)
+            image_bands.append(spectral_bands[1])
 
         return image_bands
 
@@ -42,10 +47,12 @@ def convert_to_reflectance(image_path, gain, offset, band_name):
         "Red edge": 0.67,
         "NIR": 0.61
     }
+    load_dotenv('.env')
+    global_path = os.getenv("global")
 
     ulx, uly, lrx, lry = 799, 647, 840, 670
 
-    with rasterio.open(image_path) as dataset:
+    with rasterio.open(os.path.join(global_path, image_path)) as dataset:
         dn = dataset.read(1)  # Read from first band
 
     # Compute radiance and reflectance
