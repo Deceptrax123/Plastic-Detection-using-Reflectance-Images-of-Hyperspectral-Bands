@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 from Models.Unet.blocks import Unet_encoding_block, Unet_decoding_block
-from torch.nn import Module, ConvTranspose2d, Conv2d, MaxPool2d, Dropout2d
+from torch.nn import Module, ConvTranspose2d, Conv2d, MaxPool2d, Dropout2d, Sigmoid, ReLU
 from torchsummary import summary
 
 
@@ -66,6 +66,10 @@ class UnetHyperSpectral(Module):
         self.dp5 = Dropout2d(p=0.7)
         self.dp6 = Dropout2d(p=0.7)
 
+        self.relu1 = ReLU()
+        self.relu2 = ReLU()
+        self.sigmoid = Sigmoid()
+
     def forward(self, x):
         # Down sampling
         x1 = self.down1(x)
@@ -90,7 +94,10 @@ class UnetHyperSpectral(Module):
         x7_max = self.max7(x7)
 
         x8 = self.emb1(x7_max)
+        x8 = self.relu1(x8)
+
         x9 = self.emb2(x8)
+        x9 = self.relu2(x9)
 
         # Upsampling
         x10 = self.dconv1(x9)
@@ -121,5 +128,6 @@ class UnetHyperSpectral(Module):
         xcat7 = torch.add(x16, x1)
 
         output = self.up7(xcat7)
+        output = self.sigmoid(output)
 
         return output
