@@ -1,5 +1,5 @@
 import torch
-from torch.nn import Module, Conv2d, Softmax2d, ReLU, Sigmoid, MaxPool2d, Dropout2d, Upsample, AdaptiveAvgPool2d, ConvTranspose2d, BatchNorm2d
+from torch.nn import Module, Linear, Conv2d, ReLU, Sigmoid, Dropout2d, ConvTranspose2d, BatchNorm2d
 from torchsummary import summary
 
 
@@ -7,7 +7,7 @@ class SegnetHyperSpectral(Module):
     def __init__(self):
         super(SegnetHyperSpectral, self).__init__()
 
-        self.conv1 = Conv2d(in_channels=4, out_channels=8,
+        self.conv1 = Conv2d(in_channels=5, out_channels=8,
                             stride=2, kernel_size=(3, 3), padding=1)
         self.bn1 = BatchNorm2d(8)
         self.r1 = ReLU()
@@ -73,7 +73,7 @@ class SegnetHyperSpectral(Module):
         self.r13 = ReLU()
 
         self.dconv7 = ConvTranspose2d(
-            in_channels=8, out_channels=3, padding=1, stride=2, kernel_size=(3, 3), output_padding=1)
+            in_channels=8, out_channels=5, padding=1, stride=2, kernel_size=(3, 3), output_padding=1)
 
         # dropoouts
         self.dp1 = Dropout2d(p=0.7)
@@ -89,6 +89,8 @@ class SegnetHyperSpectral(Module):
         self.dp11 = Dropout2d(p=0.7)
         self.dp12 = Dropout2d(p=0.7)
         self.dp13 = Dropout2d(p=0.7)
+
+        self.linear = Linear(in_features=5*1024*1024, out_features=5*1300*1600)
 
         self.classifier = Sigmoid()
 
@@ -168,6 +170,10 @@ class SegnetHyperSpectral(Module):
         x = self.dp13(x)
 
         x = self.dconv7(x)
+        x = x.view(x.size(0), x.size(1)*x.size(2)*x.size(3))
+        x = self.linear(x)
+
+        x = x.view(x.size(0), 5, 1300, 1600)
         x = self.classifier(x)
 
         return x

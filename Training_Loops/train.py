@@ -61,7 +61,3 @@ if __name__ == '__main__':
 
     train_loader = DataLoader(train_set, **params)
     test_loader = DataLoader(test_set, **params)
-
-    for i, (x, y) in enumerate(train_loader):
-        print(x)
-        break

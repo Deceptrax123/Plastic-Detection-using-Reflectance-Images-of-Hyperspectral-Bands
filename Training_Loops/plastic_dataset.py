@@ -3,6 +3,7 @@ import torchvision.transforms as T
 from torch.utils.data import Dataset
 import numpy as np
 from dotenv import load_dotenv
+from skimage.transform import resize
 from Spectral_analysis.reflectance_image import get_spectral_bands, convert_to_reflectance
 import os
 
@@ -29,6 +30,8 @@ class PlasticHyperspectralDataset(Dataset):
         # Ignore the RGB band
         bands_x = get_spectral_bands(spectra[1:])
         bands_x = np.reshape(bands_x, (1300, 1600, 5))
+
+        bands_x = resize(bands_x, (1024, 1024))
 
         transforms_x = T.Compose(
             [T.ToTensor(), T.Normalize(mean=(np.mean(bands_x[:, :, 0]), np.mean(bands_x[:, :, 1]),
