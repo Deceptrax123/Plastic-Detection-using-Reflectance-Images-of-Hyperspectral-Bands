@@ -50,9 +50,10 @@ class PlasticHyperspectralDataset(Dataset):
 
         # To convert to torch tensor since transpose takes place
         bands_arr = np.reshape(np.array(bands), (1300, 1600, 5))
+        bands_arr = resize(bands_arr, (1024, 1024))
 
         # Convert to Tensors
-        x_tensor = transforms_x(bands_x.astype(np.float16))
-        y_tensor = transforms_y(bands_arr.astype(np.float16))
+        x_tensor = transforms_x(bands_x.astype(np.float32))
+        y_tensor = transforms_y(bands_arr.astype(np.float32))
 
         return x_tensor, y_tensor
