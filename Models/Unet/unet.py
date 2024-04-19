@@ -1,6 +1,6 @@
 import torch
 from torch import nn
-from Model.Unet.blocks import Unet_Decoding_Block, Unet_Encoding_Block
+from Models.Unet.blocks import Unet_encoding_block, Unet_decoding_block
 from torch.nn import Module, ConvTranspose2d, Conv2d, MaxPool2d, Dropout2d
 from torchsummary import summary
 
@@ -10,13 +10,13 @@ class Unet(Module):
         super(Unet, self).__init__()
 
         # Downsampling Blocks
-        self.down1 = Unet_Encoding_Block(filters)
-        self.down2 = Unet_Encoding_Block(filters*2)
-        self.down3 = Unet_Encoding_Block(filters*4)
-        self.down4 = Unet_Encoding_Block(filters*8)
-        self.down5 = Unet_Encoding_Block(filters*16)
-        self.down6 = Unet_Encoding_Block(filters*32)
-        self.down7 = Unet_Encoding_Block(filters*64)
+        self.down1 = Unet_encoding_block(filters)
+        self.down2 = Unet_encoding_block(filters*2)
+        self.down3 = Unet_encoding_block(filters*4)
+        self.down4 = Unet_encoding_block(filters*8)
+        self.down5 = Unet_encoding_block(filters*16)
+        self.down6 = Unet_encoding_block(filters*32)
+        self.down7 = Unet_encoding_block(filters*64)
 
         # Bottleneck
         self.emb1 = Conv2d(in_channels=filters*128, out_channels=filters *
@@ -25,13 +25,13 @@ class Unet(Module):
                            128, stride=1, padding=1, kernel_size=(3, 3))
 
         # Upsampling Blocks
-        self.up1 = Unet_Decoding_Block(filters*128)
-        self.up2 = Unet_Decoding_Block(filters*64)
-        self.up3 = Unet_Decoding_Block(filters*32)
-        self.up4 = Unet_Decoding_Block(filters*16)
-        self.up5 = Unet_Decoding_Block(filters*8)
-        self.up6 = Unet_Decoding_Block(filters*4)
-        self.up7 = Unet_Decoding_Block(filters*2)
+        self.up1 = Unet_decoding_block(filters*128)
+        self.up2 = Unet_decoding_block(filters*64)
+        self.up3 = Unet_decoding_block(filters*32)
+        self.up4 = Unet_decoding_block(filters*16)
+        self.up5 = Unet_decoding_block(filters*8)
+        self.up6 = Unet_decoding_block(filters*4)
+        self.up7 = Unet_decoding_block(filters*2)
 
         # maxpooling
         self.max1 = MaxPool2d(kernel_size=(2, 2), stride=2)
