@@ -6,6 +6,7 @@ import cv2
 import numpy as np
 
 
+# Input Type:str
 def get_spectral_bands(file_paths):
     try:
         image_bands = list()  # 5X3
@@ -32,6 +33,7 @@ def get_spectral_bands(file_paths):
         print(f"Error: {str(e)}")
 
 
+# Output Type: Numpy Array
 def convert_to_reflectance(image_path, gain, offset, band_name):
     panel_calibration = {
         "Blue": 0.67,
