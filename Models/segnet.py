@@ -90,8 +90,6 @@ class SegnetHyperSpectral(Module):
         self.dp12 = Dropout2d(p=0.7)
         self.dp13 = Dropout2d(p=0.7)
 
-        self.linear = Linear(in_features=5*1024*1024, out_features=5*1300*1600)
-
         self.classifier = Sigmoid()
 
     def forward(self, x):
@@ -170,10 +168,6 @@ class SegnetHyperSpectral(Module):
         x = self.dp13(x)
 
         x = self.dconv7(x)
-        x = x.view(x.size(0), x.size(1)*x.size(2)*x.size(3))
-        x = self.linear(x)
-
-        x = x.view(x.size(0), 5, 1300, 1600)
         x = self.classifier(x)
 
         return x
