@@ -5,9 +5,9 @@ from torch.nn import Module, ConvTranspose2d, Conv2d, MaxPool2d, Dropout2d
 from torchsummary import summary
 
 
-class Unet(Module):
+class UnetHyperSpectral(Module):
     def __init__(self, filters):
-        super(Unet, self).__init__()
+        super(UnetHyperSpectral, self).__init__()
 
         # Downsampling Blocks
         self.down1 = Unet_encoding_block(filters)
@@ -59,12 +59,12 @@ class Unet(Module):
                                       stride=2, padding=1, kernel_size=(3, 3), output_padding=1)
 
         # Dropouts to prevent overfitting
-        self.dp1 = Dropout2d()
-        self.dp2 = Dropout2d()
-        self.dp3 = Dropout2d()
-        self.dp4 = Dropout2d()
-        self.dp5 = Dropout2d()
-        self.dp6 = Dropout2d()
+        self.dp1 = Dropout2d(p=0.7)
+        self.dp2 = Dropout2d(p=0.7)
+        self.dp3 = Dropout2d(p=0.7)
+        self.dp4 = Dropout2d(p=0.7)
+        self.dp5 = Dropout2d(p=0.7)
+        self.dp6 = Dropout2d(p=0.7)
 
     def forward(self, x):
         # Down sampling
