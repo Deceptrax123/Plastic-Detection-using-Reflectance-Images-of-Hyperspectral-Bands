@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader
 import wandb
 from Training_Loops.plastic_dataset import PlasticHyperspectralDataset
 from Models.segnet import SegnetHyperSpectral
-from Models.Unet.unet import UnetHyperSpectral
+from Models.hyper_cnn import HyperCNN
 from Models.initialize import initialize
 import os
 import gc
@@ -87,7 +87,7 @@ def training_loop():
 
             # checkpoints
             if (epoch+1) % 10 == 0:
-                path = f"Training_Loops/weights/segnet/model{epoch+1}.pth"
+                path = f"Training_Loops/weights/hyper_cnn/model{epoch+1}.pth"
                 torch.save(model.state_dict(), path)
 
             scheduler.step()  # Update learning rate
@@ -134,11 +134,11 @@ if __name__ == '__main__':
 
     device = torch.device("mps")
 
-    LR = 0.001
+    LR = 0.01
     NUM_EPOCHS = 100000
 
     objective = nn.MSELoss()
-    model = SegnetHyperSpectral().to(device=device)
+    model = HyperCNN().to(device=device)
     model.apply(initialize)
 
     model_optimizer = torch.optim.Adam(
