@@ -39,6 +39,36 @@ def plot_reflectance_graph(blue_ref, green_ref, red_ref, rededge_ref, nir_ref):
     plt.show()
 
 
+def compare_reflectance_graph(preds, y):
+    blue_pred, green_pred, red_pred, rededge_pred, nir_pred = preds[
+        0], preds[1], preds[2], preds[3], preds[4]
+    blue_y, green_y, red_y, rededge_y, nir_y = y[0], y[1], y[2], y[3], y[4]
+
+    # for Prediction reflectances
+    pr1, pr2, pr3, pr4, pr5 = np.mean(blue_pred), np.mean(green_pred), np.mean(red_pred), np.mean(rededge_pred), \
+        np.mean(nir_pred)
+    yr1, yr2, yr3, yr4, yr5 = np.mean(blue_y), np.mean(green_y), np.mean(red_y), np.mean(rededge_y), \
+        np.mean(nir_y)
+
+    pred_reflectances = [pr1, pr2, pr3, pr4, pr5]
+    y_reflectances = [yr1, yr2, yr3, yr4, yr5]
+
+    # Wavelength Range for each spectra
+    wavelength_ranges = ["450-500", "500-600", "600-700", "700-750", "750-900"]
+    wavelength_midpoints = [(int(start) + int(end)) / 2 for start,
+                            end in [range.split('-') for range in wavelength_ranges]]
+
+    plt.plot(wavelength_midpoints, pred_reflectances,
+             marker='o', linestyle='-')
+    plt.plot(wavelength_midpoints, y_reflectances, marker='x', linestyle='-')
+    plt.xlabel("Wavelength(nm)")
+    plt.ylabel("Reflectance(nm)")
+    plt.title("Comparative Reflectance Plot of Ground vs Predicted")
+    plt.xticks(wavelength_midpoints, wavelength_ranges)
+    plt.grid(True)
+    plt.show()
+
+
 def plot_min_max_graph(blue_ref, green_ref, red_ref, rededge_ref, nir_ref):
     band_list = ['Blue', 'Green', 'Red', 'RedEdge', 'NIR']
     band_wavelength_ranges = {'Blue': (450, 500), 'Green': (500, 600), 'Red': (600, 700),
