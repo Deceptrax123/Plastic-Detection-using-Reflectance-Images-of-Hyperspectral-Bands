@@ -68,7 +68,7 @@ class HyperCNN(Module):
         self.up4 = Upsample(scale_factor=2)
 
         self.dconv5 = ConvTranspose2d(
-            in_channels=16, out_channels=8, kernel_size=(6, 1), stride=1)
+            in_channels=16, out_channels=8, kernel_size=(3, 3), stride=1)
         self.bn11 = BatchNorm2d(8)
         self.relu11 = ReLU()
         self.up5 = Upsample(scale_factor=2)
@@ -169,6 +169,9 @@ class HyperCNN(Module):
         x = self.tanh(x)
         x = self.up6(x)
         x = self.dp12(x)
+
+        x = self.adaptive(x)
+        x = self.tanh(x)
 
         return x
 
