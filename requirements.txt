@@ -8,4 +8,3 @@ scikit-image
 wandb
 rasterio
 python-dotenv
-gdal
