@@ -116,7 +116,7 @@ if __name__ == '__main__':
         evaluate_spectral_graphs(shape=(1024, 1024, 1))
     elif m == 1:
         weights = torch.load(
-            "Training_Loops/weights/hyper_cnn/model120.pth", map_location='cpu')
+            "Training_Loops/weights/hyper_cnn/model660.pth", map_location='cpu')
 
         model = HyperCNN()
         model.eval()
