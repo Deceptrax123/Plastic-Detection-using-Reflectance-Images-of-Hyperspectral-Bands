@@ -2,7 +2,7 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 from dotenv import load_dotenv
 import torch
-from torch import cuda, nn, multiprocessing
+from torch import cuda, nn, multiprocessing, mps
 from torch.utils.data import DataLoader
 import wandb
 from Training_Loops.plastic_dataset import PlasticHyperspectralDataset
@@ -35,7 +35,12 @@ def train_epoch():
         del x_sample
         del y_sample
         del predictions
-        cuda.empty_cache()
+
+        if acc == 1:
+            cuda.empty_cache()
+        else:
+            mps.empty_cache()
+
         gc.collect(generation=2)
 
     loss = epoch_loss/(step+1)
@@ -59,7 +64,11 @@ def test_epoch():
         del y_sample
         del predictions
 
-        cuda.empty_cache()
+        if acc == 1:
+            cuda.empty_cache()
+        else:
+            mps.empty_cache()
+
         gc.collect(generation=2)
 
     loss = epoch_loss/(step+1)
@@ -117,7 +126,15 @@ if __name__ == '__main__':
         'num_workers': 0
     }
 
-    torch.cuda.get_device_name(0)
+    # choose acceleratoor
+    print("Enter 1 for Cuda and 2 for MPS(Apple Silicon Macs)")
+    acc = int(input())
+
+    if acc == 1:
+        torch.cuda.get_device_name(0)
+        device = torch.device("cuda")
+    else:
+        device = torch.device("mps")
 
     train, test = train_test_split(dataset_paths, test_size=0.20)
 
@@ -133,8 +150,6 @@ if __name__ == '__main__':
 
     train_loader = DataLoader(train_set, **params)
     test_loader = DataLoader(test_set, **params)
-
-    device = torch.device("cuda")
 
     LR = 0.01
     NUM_EPOCHS = 100000
