@@ -7,7 +7,7 @@ from skimage.transform import resize
 from Models.hyper_cnn import HyperCNN
 from Training_Loops.plastic_dataset import PlasticHyperspectalInference
 from Training_Loops.plastic_dataset import PlasticHyperCNNInferenceDataset
-from Spectral_analysis.reflectance_graph import plot_reflectance_graph
+from Spectral_analysis.reflectance_graph import plot_min_max_graph
 from Spectral_analysis.reflectance_graph import compare_reflectance_graph
 import numpy as np
 from dotenv import load_dotenv
@@ -60,34 +60,51 @@ def evaluate_spectral_graphs(shape):
         compare_reflectance_graph(pred_ref, y_ref)
 
 
-def inference(shape):
+def min_max_graph(shape):
     for step, (x, y) in enumerate(inference_loader):
         pred = model(x)
         pred_nograd = pred.detach().numpy()
         y = y.detach().numpy()
 
-        pred_img = np.transpose(pred_nograd, (0, 2, 3, 1))[0]
+        pred_ref = to_numpy(pred_nograd, shape)
+        y_ref = to_numpy(y, shape)
 
-        blue_np, green_np, red_np, rededge_np, nir_np = pred_img[:, :, 0], pred_img[:, :, 1], \
-            pred_img[:, :, 2], pred_img[:, :, 3], \
-            pred_img[:, :, 4]
-        blue_np, green_np, red_np, rededge_np, nir_np = np.reshape(blue_np, shape), \
-            np.reshape(green_np, shape), \
-            np.reshape(red_np, shape), \
-            np.reshape(rededge_np, shape), \
-            np.reshape(nir_np, shape)
+        plot_min_max_graph(pred_ref[0], pred_ref[1],
+                           pred_ref[2], pred_ref[3], pred_ref[4], title='Predicted')
+        plot_min_max_graph(y_ref[0], y_ref[1], y_ref[2],
+                           y_ref[3], y_ref[4], 'Actual')
 
-        plt.imshow(green_np)
-        plt.show()  # MAKE A SUBPLOT FIGURE HERE TO DISPLAY ALL BANDS
 
-        break
+def inference(shape):
+    for _, (x, y) in enumerate(inference_loader):
+        pred = model(x)
+        pred_nograd = pred.detach().numpy()
+        y = y.detach().numpy()
+
+        pred_np = to_numpy(pred_nograd, shape)
+        y_np = to_numpy(y, shape)
+
+        # Plot the reflectance images
+        bands = ['Blue', 'Green', 'Red', 'Red Edge', 'NIR']
+
+        for i, b in enumerate(bands):
+            fig = plt.figure(figsize=(10, 10), dpi=72)
+            ax1 = fig.add_subplot(1, 2, 1)
+            ax1.imshow(pred_np[i][0:250, 0:250, :])
+            ax1.set_title(f"{b} Predicted")
+
+            ax2 = fig.add_subplot(1, 2, 2)
+            ax2.imshow(y_np[i][0:240, 0:240, :])
+            ax2.set_title(f"{b} Ground Truth")
+
+            plt.show()
 
 
 if __name__ == '__main__':
 
     print("Enter Choice of Model")
-    print("Segnet----->0")
-    print("Hyperspectral CNN----->1")
+    print("Segnet----->0(Square Kernels with Skip Connections)")
+    print("Rectangular CNN ----->1(Rectangular Kernels without Skip connections)")
 
     m = int(input())
     if m == 0:
@@ -113,7 +130,16 @@ if __name__ == '__main__':
 
         inference_loader = DataLoader(inference_set, **params)
 
-        evaluate_spectral_graphs(shape=(1024, 1024, 1))
+        print("Click 1 to compare Reflectances and click 2 to get reflectance images and click 3 \
+                    for min-max plot")
+        ch = int(input())
+        if ch == 1:
+            evaluate_spectral_graphs(shape=(1024, 1024, 1))
+        elif ch == 2:
+            inference(shape=(1024, 1024, 1))
+        elif ch == 3:
+            min_max_graph(shape=(1024, 1024, 1))
+
     elif m == 1:
         weights = torch.load(
             "Training_Loops/weights/hyper_cnn/model660.pth", map_location='cpu')
@@ -137,12 +163,15 @@ if __name__ == '__main__':
 
         inference_loader = DataLoader(inference_set, **params)
 
-        print("Click 1 to compare Reflectances and click 2 to get reflectance images")
+        print("Click 1 to compare Reflectances and click 2 to get reflectance images and click 3 \
+                    for min-max plot")
 
         ch = int(input())
         if ch == 1:
             evaluate_spectral_graphs(shape=(1300, 1600, 1))
         elif ch == 2:
             inference(shape=(1300, 1600, 1))
+        elif ch == 3:
+            min_max_graph(shape=(1300, 1600, 1))
     else:
         print("Invalid..exit")

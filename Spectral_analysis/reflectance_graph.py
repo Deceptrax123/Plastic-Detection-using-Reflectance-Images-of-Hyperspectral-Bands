@@ -59,18 +59,20 @@ def compare_reflectance_graph(preds, y):
                             end in [range.split('-') for range in wavelength_ranges]]
 
     plt.plot(wavelength_midpoints, pred_reflectances,
-             marker='o', linestyle='-')
-    plt.plot(wavelength_midpoints, y_reflectances, marker='x', linestyle='-')
+             marker='o', linestyle='-', label="Predicted Reflectances")
+    plt.plot(wavelength_midpoints, y_reflectances, marker='x',
+             linestyle='-', label="Actual Reflectances")
     plt.xlabel("Wavelength(nm)")
     plt.ylabel("Reflectance(nm)")
     plt.title("Comparative Reflectance Plot of Ground vs Predicted")
+    plt.legend(loc='center')
     plt.xticks(wavelength_midpoints, wavelength_ranges)
     plt.grid(True)
     plt.show()
 
 
-def plot_min_max_graph(blue_ref, green_ref, red_ref, rededge_ref, nir_ref):
-    band_list = ['Blue', 'Green', 'Red', 'RedEdge', 'NIR']
+def plot_min_max_graph(blue_ref, green_ref, red_ref, rededge_ref, nir_ref, title):
+    band_list = ['Blue', 'Green', 'Red', 'Red Edge', 'NIR']
     band_wavelength_ranges = {'Blue': (450, 500), 'Green': (500, 600), 'Red': (600, 700),
                               'Red Edge': (700, 750), 'NIR': (750, 900)}
 
@@ -101,7 +103,7 @@ def plot_min_max_graph(blue_ref, green_ref, red_ref, rededge_ref, nir_ref):
 
     plt.xlabel('Wavelength Range (nm)')
     plt.ylabel('Pixel Value')
-    plt.title('Min and Max Pixel Values for Each Band Across Images')
+    plt.title(f'{title} Min and Max Pixel Values for Each Band Across Images')
     plt.xticks(band_indices, [
                f"{band}\n({band_wavelength_ranges[band][0]}-{band_wavelength_ranges[band][1]} nm)" for band in band_list])
     plt.legend()
