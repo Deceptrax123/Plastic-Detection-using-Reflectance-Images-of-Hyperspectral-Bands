@@ -2,7 +2,7 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 from dotenv import load_dotenv
 import torch
-from torch import mps, nn, multiprocessing
+from torch import cuda, nn, multiprocessing
 from torch.utils.data import DataLoader
 import wandb
 from Training_Loops.plastic_dataset import PlasticHyperspectralDataset
@@ -35,7 +35,7 @@ def train_epoch():
         del x_sample
         del y_sample
         del predictions
-        mps.empty_cache()
+        cuda.empty_cache()
         gc.collect(generation=2)
 
     loss = epoch_loss/(step+1)
@@ -59,7 +59,7 @@ def test_epoch():
         del y_sample
         del predictions
 
-        mps.empty_cache()
+        cuda.empty_cache()
         gc.collect(generation=2)
 
     loss = epoch_loss/(step+1)
@@ -87,7 +87,7 @@ def training_loop():
 
             # checkpoints
             if (epoch+1) % 10 == 0:
-                path = f"Training_Loops/weights/hyper_cnn/model{epoch+1}.pth"
+                path = f"weights/hyper_cnn_sigmoid/model{epoch+1}.pth"
                 torch.save(model.state_dict(), path)
 
             scheduler.step()  # Update learning rate
@@ -117,6 +117,8 @@ if __name__ == '__main__':
         'num_workers': 0
     }
 
+    torch.cuda.get_device_name(0)
+
     train, test = train_test_split(dataset_paths, test_size=0.20)
 
     train_set = PlasticHyperspectralDataset(train)
@@ -132,7 +134,7 @@ if __name__ == '__main__':
     train_loader = DataLoader(train_set, **params)
     test_loader = DataLoader(test_set, **params)
 
-    device = torch.device("mps")
+    device = torch.device("cuda")
 
     LR = 0.01
     NUM_EPOCHS = 100000
@@ -150,7 +152,7 @@ if __name__ == '__main__':
     train_steps = (len(train)+params['batch_size']-1)//params['batch_size']
     test_steps = (len(test)+params['batch_size']-1)//params['batch_size']
 
-    mps.empty_cache()
+    cuda.empty_cache()
     gc.collect(generation=2)
 
     training_loop()
