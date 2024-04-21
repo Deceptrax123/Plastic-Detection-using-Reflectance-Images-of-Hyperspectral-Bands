@@ -109,7 +109,7 @@ if __name__ == '__main__':
     m = int(input())
     if m == 0:
         weights = torch.load(
-            "Training_Loops/weights/segnet/model260.pth", map_location='cpu')
+            "Training_Loops/weights/segnet/segnet.pth", map_location='cpu')
 
         model = SegnetHyperSpectral()
         model.eval()
@@ -142,7 +142,7 @@ if __name__ == '__main__':
 
     elif m == 1:
         weights = torch.load(
-            "Training_Loops/weights/hyper_cnn/model660.pth", map_location='cpu')
+            "Training_Loops/weights/rect_cnn/rect_cnn.pth", map_location='cpu')
 
         model = HyperCNN()
         model.eval()
