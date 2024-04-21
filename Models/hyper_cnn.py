@@ -1,5 +1,5 @@
 import torch
-from torch.nn import Module, Conv2d, Dropout2d, MaxPool2d, ReLU, Upsample, Tanh, AdaptiveAvgPool2d, BatchNorm2d, LeakyReLU, ConvTranspose2d
+from torch.nn import Module, Conv2d, Dropout2d, MaxPool2d, ReLU, Upsample, Tanh, Sigmoid, AdaptiveAvgPool2d, BatchNorm2d, LeakyReLU, ConvTranspose2d
 from torchsummary import summary
 
 
@@ -82,7 +82,7 @@ class HyperCNN(Module):
         self.adaptive = AdaptiveAvgPool2d(output_size=(1300, 1600))
         self.reflectance = Conv2d(
             in_channels=5, out_channels=5, kernel_size=(1, 1))
-        self.tanh = Tanh()
+        self.sigmoid = Sigmoid()
 
         self.dp1 = Dropout2d(0.8)
         self.dp2 = Dropout2d(0.8)
@@ -166,12 +166,12 @@ class HyperCNN(Module):
 
         x = self.dconv6(x)
         x = self.bn12(x)
-        x = self.tanh(x)
+        x = self.relu12(x)
         x = self.up6(x)
         x = self.dp12(x)
 
         x = self.adaptive(x)
-        x = self.tanh(x)
+        x = self.sigmoid(x)
 
         return x
 
