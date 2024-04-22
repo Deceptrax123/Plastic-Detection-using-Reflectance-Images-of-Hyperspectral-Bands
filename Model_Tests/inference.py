@@ -90,11 +90,11 @@ def inference(shape):
         for i, b in enumerate(bands):
             fig = plt.figure(figsize=(10, 10), dpi=72)
             ax1 = fig.add_subplot(1, 2, 1)
-            ax1.imshow(pred_np[i][0:250, 0:250, :])
+            ax1.imshow(pred_np[i][0:200, 0:200, :])
             ax1.set_title(f"{b} Predicted")
 
             ax2 = fig.add_subplot(1, 2, 2)
-            ax2.imshow(y_np[i][0:240, 0:240, :])
+            ax2.imshow(y_np[i][0:200, 0:200, :])
             ax2.set_title(f"{b} Ground Truth")
 
             plt.show()
