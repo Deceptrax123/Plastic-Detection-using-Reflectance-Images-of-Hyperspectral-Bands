@@ -12,7 +12,6 @@ Icon
 ._*
 
 wandb/
-weights/
 *.pth
 
 # Files that might appear in the root of a volume
