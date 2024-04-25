@@ -5,6 +5,7 @@ Use Bash or Zsh to run the scripts
  - Activate the virtual environment ```source <name>/bin/activate```
  - ```pip install -r requirements.txt```
  - Run ```export PYTHONPATH="path/to/repository"```
+ - Include a ```.env``` file with the key ```global``` containing the path to all the images.
  - To run the inference scripts use ```python model_tests/inference.py``` and follow the instructions mentioned.
  
  # Training from Scratch
