@@ -1,4 +1,4 @@
-# Detection of plastic using Hyper-spectral Imagine
+# Detection of plastic using Hyper-spectral Images
 Deep Learning Course Project on Detection of  plastic on surfaces using reflectance values of hyper-spectral bands. The report for this project can be found <a href="https://github.com/Deceptrax123/Plastic-Detection-using-Reflectance-Images-of-Hyperspectral-Bands/blob/Main/deep_learning_report.pdf">here</a>
 
 ## Building
